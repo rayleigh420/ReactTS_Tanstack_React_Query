@@ -1,18 +1,10 @@
-import { useQuery } from '@tanstack/react-query'
-import { getTodo } from './api/todosApi'
 import './App.css'
+import TodoList from './features/todos/TodoList'
 
 function App() {
-
-  const todos = useQuery({
-    queryKey: ['todos'],
-    queryFn: () => getTodo()
-  })
-
   return (
     <div className="App">
-      Hello
-      {JSON.stringify(todos)}
+      <TodoList />
     </div>
   )
 }
