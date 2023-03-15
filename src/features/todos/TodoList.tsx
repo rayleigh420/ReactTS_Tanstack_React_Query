@@ -1,10 +1,15 @@
 import { faTrash } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { useQuery } from "@tanstack/react-query"
+import axios from "axios"
 import { ReactNode } from "react"
 import { getTodo } from "../../api/todosApi"
 import { Todo } from "../../types/todoType"
 import AddTodoForm from "./AddTodoForm"
+
+type error = {
+    message: string
+}
 
 const TodoList = () => {
 
@@ -45,7 +50,9 @@ const TodoList = () => {
             </article>
         ))
     } else if (isError) {
-        content = <p>Error</p>
+        if (axios.isAxiosError(error)) {
+            content = <p>{error.message}</p>
+        }
     }
 
     return (
