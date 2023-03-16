@@ -1,9 +1,9 @@
 import { Todo } from "../types/todoType";
 import axios from "../utils/axios";
 
-export const getTodo = async () => {
+export const getTodo = async (page: string) => {
     try {
-        const result = await axios.get<Todo[]>('/todos')
+        const result = await axios.get<Todo[]>(`/todos?_page=${page}&_limit=10&_sort=id&_order=desc`)
         return result.data
     } catch (e) {
         console.log(e)

@@ -2,20 +2,17 @@ import { faTrash } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
-import { ReactNode } from "react"
+import { ReactNode, useState } from "react"
 import { getTodo } from "../../api/todosApi"
 import { Todo } from "../../types/todoType"
 import AddTodoForm from "./AddTodoForm"
 
-type error = {
-    message: string
-}
-
 const TodoList = () => {
+    const [page, setPage] = useState<number>(1)
 
     const { data: todos, isLoading, isFetching, isError, isSuccess, error } = useQuery({
-        queryKey: ['todos'],
-        queryFn: () => getTodo(),
+        queryKey: ['todos', page],
+        queryFn: () => getTodo(page),
         select: data => data?.sort((a: Todo, b: Todo) => b.id! - a.id!)
     })
 
@@ -60,6 +57,10 @@ const TodoList = () => {
             <h1>Todo List</h1>
             <AddTodoForm />
             {content}
+            <div>
+                <button onClick={() => setPage(prev => prev - 1)} disabled={page == 1}>Prev</button>
+                <button onClick={() => setPage(prev => prev + 1)} disabled={page == 3}>Next</button>
+            </div>
         </main>
     )
 }
