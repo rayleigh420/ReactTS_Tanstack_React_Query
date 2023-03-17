@@ -10,7 +10,13 @@ import AddTodoForm from "./AddTodoForm"
 const TodoList = () => {
     const [page, setPage] = useState<number>(1)
 
-    const { data: todos, isLoading, isFetching, isError, isSuccess, error } = useQuery({
+    // data 2 trạng thái là data có và data không có trong cache
+    // data có trong cache có 2 loại là data cũ và data còn mới (stale time)
+    // Neu data cũ thì khi ta mount vào component react-query vẫn xác định là data có nhưng data cũ
+    // Khi data có sẵn trong cache thì isLoading = false. Tuy nhiên nếu data cũ thì vẫn bị fetch data ngầm bằng queryFn
+    // Chính vì vậy isFetching = true. Lúc đó nếu data từ server mới hơn khi cache sẽ tiếp tục cập nhật.
+
+    const { data: todos, isLoading, isFetching, isError, isSuccess, error, } = useQuery({
         queryKey: ['todos', page],
         queryFn: () => getTodo(page),
         select: data => data?.sort((a: Todo, b: Todo) => b.id! - a.id!)
@@ -23,6 +29,8 @@ const TodoList = () => {
     const deleteTodos = (todo: Todo) => {
 
     }
+
+    console.log(todos)
 
     let content;
     if (isLoading) {
