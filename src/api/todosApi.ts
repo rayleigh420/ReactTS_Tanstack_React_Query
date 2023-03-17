@@ -28,7 +28,7 @@ export const updateTodo = async (initialTodo: Todo) => {
     }
 }
 
-export const removeData = async (initialTodo: Todo) => {
+export const deleteTodo = async (initialTodo: Todo) => {
     try {
         const result = await axios.delete<Todo>(`todos/${initialTodo.id}`)
         return result.data

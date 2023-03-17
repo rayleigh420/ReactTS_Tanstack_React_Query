@@ -1,9 +1,9 @@
 import { faTrash } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import axios from "axios"
 import { ReactNode, useState } from "react"
-import { getTodo } from "../../api/todosApi"
+import { deleteTodo, getTodo, updateTodo } from "../../api/todosApi"
 import { Todo } from "../../types/todoType"
 import AddTodoForm from "./AddTodoForm"
 
@@ -22,15 +22,13 @@ const TodoList = () => {
         select: data => data?.sort((a: Todo, b: Todo) => b.id! - a.id!)
     })
 
-    const changeComplete = (todo: Todo) => {
+    const updateTodoMutate = useMutation({
+        mutationFn: (initialTodo: Todo) => updateTodo(initialTodo)
+    })
 
-    }
-
-    const deleteTodos = (todo: Todo) => {
-
-    }
-
-    console.log(todos)
+    const deleteTodoMutate = useMutation({
+        mutationFn: (initialTodo: Todo) => deleteTodo(initialTodo)
+    })
 
     let content;
     if (isLoading) {
@@ -44,13 +42,13 @@ const TodoList = () => {
                         checked={todo.completed}
                         id={String(todo.id)}
                         onChange={() =>
-                            changeComplete({ ...todo, completed: !todo.completed })
+                            updateTodoMutate.mutate({ ...todo, completed: !todo.completed })
                         }
                     />
                     <label htmlFor={String(todo.id)}>{todo.title}</label>
                 </div>
                 <button className="trash">
-                    <FontAwesomeIcon icon={faTrash} onClick={() => deleteTodos(todo)} />
+                    <FontAwesomeIcon icon={faTrash} onClick={() => deleteTodoMutate.mutate(todo)} />
                 </button>
             </article>
         ))

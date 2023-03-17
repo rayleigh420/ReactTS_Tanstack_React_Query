@@ -1190,14 +1190,8 @@
     },
     {
       "userId": 1,
-      "title": "test addTodo with react query",
-      "completed": false,
-      "id": 1003
-    },
-    {
-      "userId": 1,
       "title": " test addTodo with react query ver2.0",
-      "completed": false,
+      "completed": true,
       "id": 1004
     }
   ]
