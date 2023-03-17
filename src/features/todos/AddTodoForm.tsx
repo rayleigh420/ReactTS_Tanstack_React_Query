@@ -1,6 +1,6 @@
 import { faUpload } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ChangeEvent, FormEvent, useState } from "react"
 import { addTodo } from "../../api/todosApi";
 import { Todo } from "../../types/todoType";
@@ -8,8 +8,11 @@ import { Todo } from "../../types/todoType";
 const AddTodoForm = () => {
 
     const [newTodo, setNewTodo] = useState<string>('')
+    const queryClient = useQueryClient();
+
     const addTodoMutate = useMutation({
-        mutationFn: (initialTodo: Todo) => addTodo(initialTodo)
+        mutationFn: (initialTodo: Todo) => addTodo(initialTodo),
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] })
     })
 
     const changeTodo = (e: ChangeEvent<HTMLInputElement>) => setNewTodo(e.target.value)

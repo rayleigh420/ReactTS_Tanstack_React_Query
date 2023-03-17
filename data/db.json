@@ -1193,6 +1193,18 @@
       "title": " test addTodo with react query ver2.0",
       "completed": true,
       "id": 1004
+    },
+    {
+      "userId": 1,
+      "title": "test invalidate query with add new todo",
+      "completed": false,
+      "id": 1005
+    },
+    {
+      "userId": 1,
+      "title": "test invalidate query with update todo",
+      "completed": true,
+      "id": 1006
     }
   ]
 }

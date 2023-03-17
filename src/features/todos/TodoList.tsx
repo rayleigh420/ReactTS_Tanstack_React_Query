@@ -1,6 +1,6 @@
 import { faTrash } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import axios from "axios"
 import { ReactNode, useState } from "react"
 import { deleteTodo, getTodo, updateTodo } from "../../api/todosApi"
@@ -22,12 +22,16 @@ const TodoList = () => {
         select: data => data?.sort((a: Todo, b: Todo) => b.id! - a.id!)
     })
 
+    const queryClient = useQueryClient()
+
     const updateTodoMutate = useMutation({
-        mutationFn: (initialTodo: Todo) => updateTodo(initialTodo)
+        mutationFn: (initialTodo: Todo) => updateTodo(initialTodo),
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos', page] })
     })
 
     const deleteTodoMutate = useMutation({
-        mutationFn: (initialTodo: Todo) => deleteTodo(initialTodo)
+        mutationFn: (initialTodo: Todo) => deleteTodo(initialTodo),
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos', page] })
     })
 
     let content;
