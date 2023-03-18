@@ -22,6 +22,11 @@ const TodoList = () => {
         queryFn: () => getTodo(page),
         staleTime: 10 * 1000,           // 10s
         select: data => data?.sort((a: Todo, b: Todo) => b.id! - a.id!),
+
+        // Moi lan load qua trang moi thi mac dinh data khong co undefined nen isLoading = true
+        // Voi keepPreviousData = true, thi data truoc do se duoc giu lai, khi do mac du data da cu (stale)
+        // Nhung data van co nen isLoading = false, khi do ta se khong thay skeleton loading hay giat man hinh UX
+        keepPreviousData: true
     })
 
     const queryClient = useQueryClient()
