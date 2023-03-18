@@ -16,7 +16,7 @@ const AddTodoForm = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['todos'] })
             toast.success('Add new todo successed!')
-        }
+        },
     })
 
     const changeTodo = (e: ChangeEvent<HTMLInputElement>) => setNewTodo(e.target.value)
@@ -28,8 +28,10 @@ const AddTodoForm = () => {
                 userId: 1,
                 title: newTodo,
                 completed: false
+            }, {
+                onSuccess: () => setNewTodo('')
             })
-            setNewTodo('')
+
         }
     }
 

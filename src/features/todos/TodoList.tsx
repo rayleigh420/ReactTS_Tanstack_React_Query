@@ -20,8 +20,8 @@ const TodoList = () => {
     const { data: todos, isLoading, isFetching, isError, isSuccess, error, } = useQuery({
         queryKey: ['todos', page],
         queryFn: () => getTodo(page),
+        staleTime: 10 * 1000,           // 10s
         select: data => data?.sort((a: Todo, b: Todo) => b.id! - a.id!),
-        cacheTime: 5 * 1000,            // 5s
     })
 
     const queryClient = useQueryClient()
@@ -41,6 +41,40 @@ const TodoList = () => {
             queryClient.invalidateQueries({ queryKey: ['todos', page] })
         }
     })
+
+    // state time phai lon hon khong, boi vi neu prefetch truoc di nua, neu statle time = 0
+    // Thi khi ta 'that su' click vao next hoac prev button thi no van goi la getTodo lan nua. 
+    // Luc nay thi no thay statle time da het thi luc do no se call api lai lan nua (lang phi)
+    // Dong thoi khi hover lien tuc vao button se khong fetch lai api lien tuc
+
+    // Con cache time o day lam gi. Voi truong hop nguoi dung chi hover vao button chu khong co y tuong bam vao
+    // Thi cache chi luu trong 10s thi se xoa data khoi cache de tranh luu qua nhieu
+
+    // Tuy nhien co mot luu y the nay
+    // Ta thay getTodo bi goi 2 lan, mot lan hover, sau khi hover ta bam vao thi onclick se goi api
+    // Ta thay khi hover co stale time la 10s
+    // Tuy nhien khi click thi getTodo query voi stale time mac dinh la 0s
+    // Voi truong hop 2 query giong nhau goi lien tiep the nay, neu query sau co stale time < stale time truoc do
+    // Thi kha nang cao van la bi fetch lai 
+    // Vi du lan dau fetch co stale la 10s, sau khi duoc 7s ta bam vao button, voi lan 2 fetch ta cau hinh stale la 5s
+    // Luc nay 7s > 5s => mac dinh la data da cu nen se fetch lai lan nua. Do do neu muon lam prefetch thi phai cau hinh
+    // stale time o ca 2 ham query, va stale time cua query sau >= stale time query truoc do
+
+    const prefetchPrevPage = (page: number) => {
+        queryClient.prefetchQuery(['todos', page], {
+            queryFn: () => getTodo(page),
+            staleTime: 10 * 1000,
+            cacheTime: 10 * 1000            // 10s
+        })
+    }
+
+    const prefetchNextPage = (page: number) => {
+        queryClient.prefetchQuery(['todos', page], {
+            queryFn: () => getTodo(page),
+            staleTime: 10 * 1000,
+            cacheTime: 10 * 1000,
+        })
+    }
 
     let content;
     if (isLoading) {
@@ -76,10 +110,10 @@ const TodoList = () => {
             <AddTodoForm />
             {content}
             <div>
-                <button onClick={() => setPage(prev => prev - 1)} disabled={page == 1}>Prev</button>
-                <button onClick={() => setPage(prev => prev + 1)} disabled={page == 3}>Next</button>
+                <button onClick={() => setPage(prev => prev - 1)} disabled={page == 1} onMouseEnter={() => prefetchPrevPage(page - 1)}>Prev</button>
+                <button onClick={() => setPage(prev => prev + 1)} disabled={page == 3} onMouseEnter={() => prefetchNextPage(page + 1)}> Next</button>
             </div>
-        </main>
+        </main >
     )
 }
 
