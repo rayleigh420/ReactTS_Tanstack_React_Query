@@ -1205,6 +1205,18 @@
       "title": "test invalidate query with update todo",
       "completed": true,
       "id": 1006
+    },
+    {
+      "userId": 1,
+      "title": "test on success with toast",
+      "completed": true,
+      "id": 1007
+    },
+    {
+      "userId": 1,
+      "title": "test setQueryData",
+      "completed": true,
+      "id": 1008
     }
   ]
 }

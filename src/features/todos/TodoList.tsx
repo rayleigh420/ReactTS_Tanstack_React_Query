@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import axios from "axios"
 import { ReactNode, useState } from "react"
+import { toast } from "react-toastify"
 import { deleteTodo, getTodo, updateTodo } from "../../api/todosApi"
 import { Todo } from "../../types/todoType"
 import AddTodoForm from "./AddTodoForm"
@@ -19,19 +20,26 @@ const TodoList = () => {
     const { data: todos, isLoading, isFetching, isError, isSuccess, error, } = useQuery({
         queryKey: ['todos', page],
         queryFn: () => getTodo(page),
-        select: data => data?.sort((a: Todo, b: Todo) => b.id! - a.id!)
+        select: data => data?.sort((a: Todo, b: Todo) => b.id! - a.id!),
+        cacheTime: 5 * 1000,            // 5s
     })
 
     const queryClient = useQueryClient()
 
     const updateTodoMutate = useMutation({
         mutationFn: (initialTodo: Todo) => updateTodo(initialTodo),
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos', page] })
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['todos', page] })
+            toast.success('Update todo successed!')
+        }
     })
 
     const deleteTodoMutate = useMutation({
         mutationFn: (initialTodo: Todo) => deleteTodo(initialTodo),
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos', page] })
+        onSuccess: () => {
+            toast.success("Delete todo successed!")
+            queryClient.invalidateQueries({ queryKey: ['todos', page] })
+        }
     })
 
     let content;
