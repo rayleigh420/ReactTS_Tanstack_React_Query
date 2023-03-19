@@ -1,6 +1,6 @@
 import { faTrash } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useIsFetching, useIsMutating, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import axios from "axios"
 import { ReactNode, useState } from "react"
 import { toast } from "react-toastify"
@@ -19,9 +19,16 @@ const TodoList = () => {
 
     const { data: todos, isLoading, isFetching, isError, isSuccess, error, } = useQuery({
         queryKey: ['todos', page],
-        queryFn: () => getTodo(page),
+        queryFn: () => {
+            const controller = new AbortController();
+            setTimeout(() => {
+                controller.abort();
+            }, 5000)
+            return getTodo(page, controller.signal)
+        },
         staleTime: 10 * 1000,           // 10s
-        select: data => data?.sort((a: Todo, b: Todo) => b.id! - a.id!),
+
+        select: (data) => data?.sort((a: Todo, b: Todo) => b.id! - a.id!),
 
         // Moi lan load qua trang moi thi mac dinh data khong co undefined nen isLoading = true
         // Voi keepPreviousData = true, thi data truoc do se duoc giu lai, khi do mac du data da cu (stale)
@@ -81,6 +88,11 @@ const TodoList = () => {
         })
     }
 
+    // So luong nhung lan "dang duoc" fetching hay mutating
+    // Sau khi fetch hoac mutate xong thi so luong ve lai 0
+    const isFetchingIndicators = useIsFetching();
+    const isMuatatingIndicators = useIsMutating();
+
     let content;
     if (isLoading) {
         content = <p>Loading</p>
@@ -111,12 +123,15 @@ const TodoList = () => {
 
     return (
         <main>
-            <h1>Todo List</h1>
+            <h1>
+                Todo List
+                <span>Indicators: {isFetchingIndicators + isMuatatingIndicators}</span>
+            </h1>
             <AddTodoForm />
             {content}
             <div>
                 <button onClick={() => setPage(prev => prev - 1)} disabled={page == 1} onMouseEnter={() => prefetchPrevPage(page - 1)}>Prev</button>
-                <button onClick={() => setPage(prev => prev + 1)} disabled={page == 3} onMouseEnter={() => prefetchNextPage(page + 1)}> Next</button>
+                <button onClick={() => setPage(prev => prev + 1)} disabled={page == 3} onMouseEnter={() => prefetchNextPage(page + 1)}>Next</button>
             </div>
         </main >
     )
