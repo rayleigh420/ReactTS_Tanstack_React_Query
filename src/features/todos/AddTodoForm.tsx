@@ -17,6 +17,9 @@ const AddTodoForm = () => {
             queryClient.invalidateQueries({ queryKey: ['todos'] })
             toast.success('Add new todo successed!')
         },
+        onError: () => {
+            toast.warn('Something Wrong!')
+        }
     })
 
     const changeTodo = (e: ChangeEvent<HTMLInputElement>) => setNewTodo(e.target.value)
