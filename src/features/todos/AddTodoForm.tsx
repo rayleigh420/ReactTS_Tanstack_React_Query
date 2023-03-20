@@ -6,19 +6,27 @@ import { toast } from "react-toastify";
 import { addTodo } from "../../api/todosApi";
 import { Todo } from "../../types/todoType";
 
-const AddTodoForm = () => {
+const AddTodoForm = ({ page }: { page: number }) => {
 
     const [newTodo, setNewTodo] = useState<string>('')
     const queryClient = useQueryClient();
 
     const addTodoMutate = useMutation({
         mutationFn: (initialTodo: Todo) => addTodo(initialTodo),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['todos'] })
+        onSuccess: (data) => {
+            // Vi ta can id do json-server tra ve nen dung pessimistic update
+            let previousTodo: Todo[] = queryClient.getQueryData(['todos', page])!
+            queryClient.setQueryData(['todos', page], [data, ...previousTodo])
             toast.success('Add new todo successed!')
         },
         onError: () => {
             toast.warn('Something Wrong!')
+        },
+        onSettled: () => {
+            // Van nen fetch ngam lai du cho co loi hay khong, dieu nay lam cho data dong bo hon
+            // Tuy nhien vi day la pessimistic update, ta nhan data tu server sau do ms update
+            // Nen khong can thiet phai invalidates lai
+            queryClient.invalidateQueries({ queryKey: ['todos', page] })
         }
     })
 

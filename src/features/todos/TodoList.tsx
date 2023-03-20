@@ -40,16 +40,54 @@ const TodoList = () => {
 
     const updateTodoMutate = useMutation({
         mutationFn: (initialTodo: Todo) => updateTodo(initialTodo),
+        // Truoc khi call api gi do no se cap nhat truoc
+        onMutate: async (initialTodo: Todo) => {
+            await queryClient.cancelQueries({ queryKey: ['todos', page] })
+            const previousTodo: Todo[] = queryClient.getQueryData(['todos', page]) || []
+
+            const newTodoList = [...previousTodo]
+            const index = newTodoList.findIndex((todo: Todo) => todo.id == initialTodo.id)
+            newTodoList[index].completed = initialTodo.completed
+
+            queryClient.setQueryData(['todos', page], newTodoList)
+
+            // Snap lai previous data
+            return { previousTodo }
+        },
+        // Error thi phai undo lai
+        onError: (err, initialTodo, context) => {
+            queryClient.setQueryData(['todos', page], context?.previousTodo)
+        },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['todos', page] })
             toast.success('Update todo successed!')
+        },
+        onSettled: () => {
+            // Kieu j cx phai fetch lai cho chac an, vi luc ta cap nhat cache theo chu quan khong dua vao data tu server
+            queryClient.invalidateQueries({ queryKey: ['todos', page] })
         }
     })
 
+    // Tuong tu
     const deleteTodoMutate = useMutation({
         mutationFn: (initialTodo: Todo) => deleteTodo(initialTodo),
+        onMutate: async (initialTodo: Todo) => {
+            await queryClient.cancelQueries({ queryKey: ['todos', page] })
+            const previousTodo: Todo[] = queryClient.getQueryData(['todos', page]) || []
+
+            const newTodoList = previousTodo.filter((todo: Todo) => todo.id != initialTodo.id)
+            console.log(initialTodo, newTodoList)
+
+            queryClient.setQueryData(['todos', page], newTodoList)
+
+            return { previousTodo }
+        },
+        onError: (err, initialTodo, context) => {
+            queryClient.setQueryData(['todos', page], context?.previousTodo)
+        },
         onSuccess: () => {
             toast.success("Delete todo successed!")
+        },
+        onSettled: () => {
             queryClient.invalidateQueries({ queryKey: ['todos', page] })
         }
     })
@@ -127,7 +165,7 @@ const TodoList = () => {
                 Todo List
                 <span>Indicators: {isFetchingIndicators + isMuatatingIndicators}</span>
             </h1>
-            <AddTodoForm />
+            <AddTodoForm page={page} />
             {content}
             <div>
                 <button onClick={() => setPage(prev => prev - 1)} disabled={page == 1} onMouseEnter={() => prefetchPrevPage(page - 1)}>Prev</button>

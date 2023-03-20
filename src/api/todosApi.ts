@@ -12,15 +12,16 @@ export const getTodo = async (page: number, signal?: AbortSignal) => {
 
 export const addTodo = async (initialTodo: Todo) => {
     try {
-        if (Math.random() > 0.5) {
-            const a = 5;
-            a = 1
-        }
-        else {
-            const result = await axios.post<Todo>('/todos', initialTodo)
-            return result.data
-        }
+        // if (Math.random() > 0.5) {
+        //     const a = 5;
+        //     a = 1
+        // }
+        // else {
+        // }
+        const result = await axios.post<Todo>('/todos', initialTodo)
+        return result.data
     } catch (e: any) {
+        console.log(e)
         throw Error(e.message)
     }
 }
