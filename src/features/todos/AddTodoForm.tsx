@@ -19,8 +19,8 @@ const AddTodoForm = ({ page }: { page: number }) => {
             queryClient.setQueryData(['todos', page], [data, ...previousTodo])
             toast.success('Add new todo successed!')
         },
-        onError: () => {
-            toast.warn('Something Wrong!')
+        onError: (err: { message: string }) => {
+            toast.warn(err.message)
         },
         onSettled: () => {
             // Van nen fetch ngam lai du cho co loi hay khong, dieu nay lam cho data dong bo hon

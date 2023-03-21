@@ -18,6 +18,9 @@ export const addTodo = async (initialTodo: Todo) => {
         // }
         // else {
         // }
+        if (Math.random() < 0.5) {
+            throw Error('Random less 0.5')
+        }
         const result = await axios.post<Todo>('/todos', initialTodo)
         return result.data
     } catch (e: any) {

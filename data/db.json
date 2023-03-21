@@ -1397,6 +1397,42 @@
       "title": "test optimistic update in CRUD tood",
       "completed": true,
       "id": 1038
+    },
+    {
+      "userId": 1,
+      "title": "test handle error",
+      "completed": false,
+      "id": 1039
+    },
+    {
+      "userId": 1,
+      "title": "test error agaim",
+      "completed": false,
+      "id": 1040
+    },
+    {
+      "userId": 1,
+      "title": "test again",
+      "completed": true,
+      "id": 1041
+    },
+    {
+      "userId": 1,
+      "title": "error",
+      "completed": false,
+      "id": 1042
+    },
+    {
+      "userId": 1,
+      "title": "error",
+      "completed": false,
+      "id": 1043
+    },
+    {
+      "userId": 1,
+      "title": "erroiroror",
+      "completed": false,
+      "id": 1044
     }
   ]
 }

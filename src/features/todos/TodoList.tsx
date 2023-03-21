@@ -55,7 +55,8 @@ const TodoList = () => {
             return { previousTodo }
         },
         // Error thi phai undo lai
-        onError: (err, initialTodo, context) => {
+        onError: (err: { message: string }, initialTodo, context) => {
+            toast.warn(err.message)
             queryClient.setQueryData(['todos', page], context?.previousTodo)
         },
         onSuccess: () => {
@@ -75,13 +76,13 @@ const TodoList = () => {
             const previousTodo: Todo[] = queryClient.getQueryData(['todos', page]) || []
 
             const newTodoList = previousTodo.filter((todo: Todo) => todo.id != initialTodo.id)
-            console.log(initialTodo, newTodoList)
 
             queryClient.setQueryData(['todos', page], newTodoList)
 
             return { previousTodo }
         },
-        onError: (err, initialTodo, context) => {
+        onError: (err: { message: string }, initialTodo, context) => {
+            toast.warn(err.message)
             queryClient.setQueryData(['todos', page], context?.previousTodo)
         },
         onSuccess: () => {
