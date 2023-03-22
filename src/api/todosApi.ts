@@ -12,12 +12,6 @@ export const getTodo = async (page: number, signal?: AbortSignal) => {
 
 export const addTodo = async (initialTodo: Todo) => {
     try {
-        // if (Math.random() > 0.5) {
-        //     const a = 5;
-        //     a = 1
-        // }
-        // else {
-        // }
         if (Math.random() < 0.5) {
             throw Error('Random less 0.5')
         }
